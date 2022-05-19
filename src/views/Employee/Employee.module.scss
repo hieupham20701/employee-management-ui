@@ -1,0 +1,27 @@
+@import "//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css";
+
+:root{
+  --primary-color: rgb(211, 212, 101);
+  --text-color: #333;
+}
+
+.btnDeleteEmployee{
+  float: right;
+  font-size: 20px;
+  margin-left: 10px;
+  :hover{
+    cursor: pointer;  
+  }
+}
+.btnEditEmployee{
+  float: right;
+  font-size: 20px;
+  :hover{
+    cursor: pointer;
+  }
+}
+
+.txtNameEmployee{
+  float: left;
+  color: var(--text-color);
+}

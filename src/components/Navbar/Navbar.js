@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import styles from './Navbar.module.scss';
 export default function NavBar() {
   return (
     <Navbar bg='dark' variant='dark'>
@@ -13,8 +13,9 @@ export default function NavBar() {
           <Nav className='me-auto'></Nav>
           <Nav>
             <Button id='employeeBtn'>Employee</Button>
-
-            <Button id='teamBtn'>Team</Button>
+            <Button id='teamBtn' className={clsx([styles.btnTab])}>
+              Team
+            </Button>
           </Nav>
         </Navbar.Collapse>
       </Container>

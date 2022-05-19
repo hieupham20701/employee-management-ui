@@ -63,7 +63,7 @@ export default function Home() {
           />
         </Form.Group>
       </Form>
-      <Table>
+      <Table bordered='1'>
         <thead>
           <tr>
             <th>
