@@ -1,0 +1,54 @@
+@import "//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css";
+
+:root{
+   --primary-color: rgb(224, 238, 22);
+   --text-color: #333;
+
+}
+
+.title{
+  float: left;
+  color: var(--text-color);
+}
+
+.btnAddEmployee{
+  float: right;
+  margin-left: 20px;
+  font-size: 22px;
+  :hover{
+    color: var(--primary-color);
+    cursor: pointer;
+  }
+}
+
+.unactiveMultiDel {
+  float: right;
+  margin-left: 20px;
+  font-size: 22px;
+  opacity: 0.6;
+  pointer-events: none;
+  :hover{
+    color: var(--primary-color);
+    cursor: pointer;
+  }
+}
+.activeMultiDel {
+  float: right;
+  margin-left: 20px;
+  font-size: 22px;
+  :hover {
+      color: var(--primary-color);
+      cursor: pointer;
+  }
+  opacity: 1;
+  pointer-events: auto
+}
+
+.formSearchEmployee{
+  float: right;
+
+}
+
+.modal {
+  width: 50%;
+}
