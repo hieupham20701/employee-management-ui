@@ -8,11 +8,13 @@ export default function NavBar() {
   return (
     <Navbar bg='dark' variant='dark'>
       <Container>
-        <Navbar.Brand href='#home'>Employee Manager</Navbar.Brand>
+        <Navbar.Brand href='/'>Employee Manager</Navbar.Brand>
         <Navbar.Collapse id='responsive-navbar-nav'>
           <Nav className='me-auto'></Nav>
           <Nav>
-            <Button id='employeeBtn'>Employee</Button>
+            <Button id='employeeBtn' href='/'>
+              Employee
+            </Button>
             <Button id='teamBtn' className={clsx([styles.btnTab])}>
               Team
             </Button>

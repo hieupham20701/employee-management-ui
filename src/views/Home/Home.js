@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import clsx from 'clsx';
 import styles from './Home.module.scss';
 import { FaInfo, FaTrashAlt, FaPlusCircle, FaPencilAlt } from 'react-icons/fa';
+import image from '../../assets/img/default-avatar.png';
+
 import {
   Form,
   FormCheck,
@@ -17,13 +19,18 @@ export default function Home() {
   const selectedEmployees = [];
   const pageNumbers = [];
   const [show, setShow] = useState(false);
-
+  const [avatar, setAvatar] = useState();
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(event);
+  };
+  const handlePreviewAvatar = (event) => {
+    const file = event.taget.file[0];
+    file && (file.preview = URL.createObjectURL(file));
+    setAvatar(file);
   };
   let temp;
   if (selectedEmployees.length === 0) {
@@ -106,6 +113,42 @@ export default function Home() {
             // method='POST'
             onSubmit={handleSubmit}
           >
+            <div className={clsx([styles.labelDiv])}>
+              <Form.Label
+                className={clsx([styles.avatarLabel])}
+                htmlFor='imageInput'
+              >
+                <FaPencilAlt />
+              </Form.Label>
+            </div>
+            <div className={clsx([styles.avatarPreview])}>
+              {avatar ? (
+                <img
+                  className={clsx([styles.imageUpload])}
+                  src={avatar.preview}
+                  alt=''
+                />
+              ) : (
+                <img
+                  className={clsx([styles.imageUpload])}
+                  src={image}
+                  alt=''
+                />
+              )}
+            </div>
+            <Form.Group
+              className={clsx('mb-3', [styles.imageInput])}
+              controlId='imageInput'
+            >
+              <Form.Control
+                className={clsx('shadow-none', [styles.formInput])}
+                name='imageUpload'
+                type='file'
+                accept='image/*'
+                onChange={handlePreviewAvatar}
+              />
+            </Form.Group>
+
             <Form.Group controlId='fullNameInput' col='12' className='mb-3'>
               <Form.Label>Fullname Employee</Form.Label>
               <Form.Control
@@ -194,14 +237,6 @@ export default function Home() {
             <Button variant='primary' type='submit' onSubmit={handleSubmit}>
               Submit
             </Button>
-            {/* <Modal.Footer>
-              <Button variant='secondary' onClick={handleClose}>
-                Close
-              </Button>
-              <Button variant='primary' type='submit'>
-                Submit
-              </Button>
-            </Modal.Footer> */}
           </Form>
         </Modal.Body>
       </Modal>
