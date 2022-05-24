@@ -13,7 +13,7 @@ function App() {
         <Col sm='8'>
           <Routes>
             <Route exact path='/' element={<Home />} />
-            <Route exact path='/employee' element={<Employee />} />
+            <Route exact path='/employee/:id' element={<Employee />} />
             <Route exact path='/team' element={<Team />} />
           </Routes>
         </Col>

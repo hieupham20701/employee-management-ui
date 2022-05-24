@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import image from '../../assets/img/default-avatar.png';
+import axios from 'axios';
 import {
   FaInfo,
   FaTrashAlt,
@@ -19,12 +20,25 @@ import {
   Button,
   Modal,
 } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 export default function Employee() {
   const [showform, setShowForm] = useState(true);
-
+  const [employee, setEmployee] = useState({});
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const { id } = useParams();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    const employeeRes = await axios.get(
+      `http://localhost:8087/api/employees/` + id,
+    );
+    setEmployee(employeeRes.data);
+  };
+  console.log(employee);
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(event);
@@ -47,11 +61,13 @@ export default function Employee() {
         <div className={clsx(['col-4'])}>
           <img className={clsx([styles.avatar])} src={image} />
           <div className={clsx([styles.info])}>
-            <span className={clsx([styles.no])}>No:1</span>
-            <span className={clsx([styles.age])}>Age:22</span>
+            <span className={clsx([styles.no])}>No: {employee.id}</span>
+            <span className={clsx([styles.age])}>Age:{employee.age}</span>
           </div>
           <div className={clsx([styles.info])}>
-            <span className={clsx([styles.sex])}>Sex: Male</span>
+            <span className={clsx([styles.sex])}>
+              Sex: {employee.sex ? 'Male' : 'Female'}
+            </span>
           </div>
         </div>
         <div className={clsx(['col-8'])}>
@@ -73,7 +89,7 @@ export default function Employee() {
                       name='team'
                       type='text'
                       id='team'
-                      value={'Team: ' + 'IT'}
+                      value={'Team: ' + employee.teamDTO.name}
                       readOnly={showform}
                     />
                   </Col>
@@ -84,7 +100,7 @@ export default function Employee() {
                       name='address'
                       type='text'
                       id='address'
-                      value={'Address: ' + 'HCM'}
+                      value={'Address: ' + employee.address}
                       readOnly={showform}
                     />
                   </Col>
@@ -93,7 +109,7 @@ export default function Employee() {
                       name='salary'
                       type='text'
                       id='salary'
-                      value={'Salary per hour: ' + '2' + '$'}
+                      value={'Salary per hour: ' + employee.moneyPerHour + '$'}
                       readOnly={showform}
                     />
                   </Col>

@@ -1,11 +1,9 @@
 @import "//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css";
-
 :root{
-   --primary-color: rgb(238, 119, 22);
+   --primary-color: rgb(255, 43, 6);
    --text-color: #333;
 
 }
-
 .title{
   float: left;
   color: var(--text-color);
@@ -20,7 +18,10 @@
     cursor: pointer;
   }
 }
-
+.headerModal{
+  background-color: var(--primary-color) !important; 
+  color: whitesmoke;
+}
 .unactiveMultiDel {
   float: right;
   margin-left: 20px;
@@ -53,11 +54,15 @@
   width: 50%;
 }
 
-.labelDiv{
+.centerAlign{
   text-align: center;
-
+  align-self:center;
 }
-
+.labelDiv{
+  display: inline-flex;
+  width: 150px;
+  position: absolute;
+}
 .avatarLabel{
   width: 26px;
   height: 26px;
@@ -70,6 +75,9 @@
       width: 13px;
       height: 27px;
       color: #fff;
+  }
+  :hover{
+    cursor: pointer;
   }
 }
 .avatarPreview {   
@@ -87,4 +95,23 @@
   border-radius: 50%;
 }
 
+.imageInput{
+  display: none;
+}
 
+.btnSubmit{
+  float: right;
+  margin-top: 10px; 
+  :hover{
+    background-color: var(--primary-color);
+    cursor: pointer;
+  }
+}
+
+.btnDetailInfo{
+  :hover{
+    color: var(--primary-color);
+    cursor: pointer;
+  }
+  margin-right: 5px;
+}
