@@ -15,7 +15,7 @@ export default function NavBar() {
             <Button id='employeeBtn' href='/'>
               Employee
             </Button>
-            <Button id='teamBtn' className={clsx([styles.btnTab])}>
+            <Button id='teamBtn' className={clsx([styles.btnTab])} href='/team'>
               Team
             </Button>
           </Nav>

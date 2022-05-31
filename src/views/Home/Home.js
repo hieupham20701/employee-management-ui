@@ -6,6 +6,7 @@ import image from '../../assets/img/default-avatar.png';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import LoadingScreen from 'react-loading-screen';
 import {
   Form,
   FormCheck,
@@ -30,6 +31,8 @@ export default function Home() {
   const [teams, setTeams] = useState([]);
   const [idDelete, setIdDelete] = useState([]);
   const [selectedEmployee, setSelectedEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const index = 0;
   useEffect(() => {
     fetchData();
   }, []);
@@ -48,6 +51,7 @@ export default function Home() {
     setEmployees(employees.data.employeeDTOs);
     setTeams(teams.data);
     setTotalPage(employees.data.totalPages);
+    setLoading(false);
   };
   for (let i = 0; i < totalPage; i++) {
     pageNumbers.push(i);
@@ -82,7 +86,9 @@ export default function Home() {
       console.log(res.data);
 
       fetchData();
-      handleSubmitImage(res.data, image);
+      if (data.get('imageUpload') !== '') {
+        handleSubmitImage(res.data, image);
+      }
     });
   };
   const handleSubmitImage = async (employee, image) => {
@@ -166,6 +172,22 @@ export default function Home() {
       checkbox.checked = event.target.checked;
     }
   };
+
+  const handleCheckChieldElement = (event) => {
+    console.log(event.target.checked);
+    let tempEmployee = employees;
+    let tempSelectedEmployee = [];
+    tempEmployee.forEach((employee) => {
+      if (employee.id.toString() === event.target.value) {
+        employee.isChecked = event.target.checked;
+      }
+      if (employee.isChecked) {
+        tempSelectedEmployee.push(employee);
+      }
+      setSelectedEmployees(tempSelectedEmployee);
+    });
+  };
+  console.log(selectedEmployee.length);
   let temp;
   if (selectedEmployee.length === 0) {
     console.log(selectedEmployee);
@@ -183,6 +205,14 @@ export default function Home() {
   };
   return (
     <>
+      <LoadingScreen
+        loading={loading}
+        bgColor='#f1f1f1'
+        spinnerColor='#9ee5f8'
+        textColor='#676767'
+        logoSrc='../../coding_club.png'
+        text='Wait a minute!'
+      ></LoadingScreen>
       <span
         id='btnAddEmployee'
         className={clsx([styles.btnAddEmployee])}
@@ -242,10 +272,10 @@ export default function Home() {
                   className={'item-checkbox'}
                   value={employee.id}
                   defaultChecked={employee.isChecked}
-                  // onClick={handleCheckChieldElement}
+                  onClick={handleCheckChieldElement}
                 ></input>
               </td>
-              <td>{employee.id}</td>
+              <td>{employees.indexOf(employee) + 1}</td>
               <td>{employee.fullName}</td>
               <td>{employee.phoneNumber}</td>
               <td>{employee.teamDTO.name}</td>

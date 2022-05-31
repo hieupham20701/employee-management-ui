@@ -100,3 +100,47 @@
     color: var(--primary-color);
   }
 }
+
+.centerAlign{
+  text-align: center;
+  align-self:center;
+}
+.avatarLabel{
+  width: 26px;
+  height: 26px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  margin-top: 10px;
+  margin-left: 36px;
+  text-align: center;
+  svg {
+      width: 13px;
+      height: 27px;
+      color: #fff;
+  }
+  :hover{
+    cursor: pointer;
+  }
+}
+.avatarPreview {   
+  width: 150px;
+  height: 150px;
+  margin: auto;
+  border: dashed 2px var(--primary-color);
+  border-radius: 50%;
+
+}
+.labelDiv{
+  display: inline-flex;
+  width: 150px;
+  position: absolute;
+}
+.imageUpload {
+  width: 146px;
+  height: 146px;
+  border-radius: 50%;
+}
+
+.imageInput{
+  display: none;
+}
