@@ -12,7 +12,7 @@
 .btnAddEmployee{
   float: right;
   margin-left: 20px;
-  font-size: 22px;
+  font-size: 25px;
   :hover{
     color: var(--primary-color);
     cursor: pointer;
@@ -25,7 +25,7 @@
 .unactiveMultiDel {
   float: right;
   margin-left: 20px;
-  font-size: 22px;
+  font-size: 25px;
   opacity: 0.6;
   pointer-events: none;
   :hover{
@@ -36,7 +36,7 @@
 .activeMultiDel {
   float: right;
   margin-left: 20px;
-  font-size: 22px;
+  font-size: 25px;
   :hover {
       color: var(--primary-color);
       cursor: pointer;
@@ -113,5 +113,6 @@
     color: var(--primary-color);
     cursor: pointer;
   }
-  margin-right: 5px;
+  margin-right: 15px;
+  font-size: 20px;
 }

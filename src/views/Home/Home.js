@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import LoadingScreen from 'react-loading-screen';
+import Employee from '../Employee/Employee';
 import {
   Form,
   FormCheck,
@@ -33,6 +34,8 @@ export default function Home() {
   const [selectedEmployee, setSelectedEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const index = 0;
+  const [validated, setValidated] = useState(false);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -57,7 +60,9 @@ export default function Home() {
     pageNumbers.push(i);
   }
   const handleSubmitEmployee = async (event) => {
+    setValidated(true);
     event.preventDefault();
+
     console.log(event);
     const data = new FormData(event.target);
     const newEmployee = {
@@ -103,9 +108,8 @@ export default function Home() {
       console.log(res);
     });
   };
-
+  console.log(validated);
   const changePage = (event, pageCurrent) => {
-    console.log(pageCurrent);
     setCurrentPage(pageCurrent);
     fetchData(pageCurrent);
   };
@@ -187,10 +191,8 @@ export default function Home() {
       setSelectedEmployees(tempSelectedEmployee);
     });
   };
-  console.log(selectedEmployee.length);
   let temp;
   if (selectedEmployee.length === 0) {
-    console.log(selectedEmployee);
     temp = false;
   } else temp = true;
   const handlePreviewAvatar = (event) => {
@@ -244,7 +246,7 @@ export default function Home() {
           />
         </Form.Group>
       </Form>
-      <Table bordered='1'>
+      <Table>
         <thead>
           <tr>
             <th>
@@ -280,10 +282,16 @@ export default function Home() {
               <td>{employee.phoneNumber}</td>
               <td>{employee.teamDTO.name}</td>
               <td>
-                <FaInfo
-                  onClick={() => EmployeeDetail(employee.id)}
-                  className={clsx([styles.btnDetailInfo])}
-                />
+                <Link
+                  to={'/employee/' + employee.id}
+                  element={<Employee />}
+                  style={{ color: 'black' }}
+                >
+                  <FaInfo
+                    // onClick={() => EmployeeDetail(employee.id)}
+                    className={clsx([styles.btnDetailInfo])}
+                  />
+                </Link>
                 <FaTrashAlt
                   onClick={() => handleDeleteItem(employee.id)}
                   className={clsx([styles.btnDetailInfo])}
@@ -309,7 +317,7 @@ export default function Home() {
                 key={pageNumber}
                 onClick={(e) => changePage(e, pageNumber)}
               >
-                {pageNumber}
+                {pageNumber + 1}
               </Pagination.Item>
             );
           })}
@@ -333,6 +341,7 @@ export default function Home() {
             className='addEmployeeForm'
             // method='POST'
             onSubmit={handleSubmitEmployee}
+            validated={validated}
           >
             <div className={clsx([styles.centerAlign])}>
               <div className={clsx([styles.labelDiv])}>
@@ -378,7 +387,9 @@ export default function Home() {
                 type='text'
                 placeholder='Fill the Fullname of Employee'
                 name='fullName'
+                required
               ></Form.Control>
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Row>
               <Col sm='6'>
@@ -391,7 +402,9 @@ export default function Home() {
                       type='text'
                       placeholder='Address'
                       name='address'
+                      required
                     ></Form.Control>
+                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -420,7 +433,9 @@ export default function Home() {
                       type='text'
                       placeholder='Age'
                       name='age'
+                      required
                     ></Form.Control>
+                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -439,14 +454,16 @@ export default function Home() {
               <Col sm='6'>
                 <Form.Group controlId='moneyPerHourEmployeeInput'>
                   <Form.Label column sm='4'>
-                    Mone/Hour
+                    Money/Hour
                   </Form.Label>
                   <Col sm='10'>
                     <Form.Control
                       type='text'
                       placeholder='Money'
                       name='moneyPerHour'
+                      required
                     ></Form.Control>
+                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -460,7 +477,9 @@ export default function Home() {
                       type='text'
                       placeholder='Phone number'
                       name='phoneNumber'
+                      required
                     ></Form.Control>
+                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -495,7 +514,9 @@ export default function Home() {
                       type='text'
                       placeholder='Position'
                       name='position'
+                      required
                     ></Form.Control>
+                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>

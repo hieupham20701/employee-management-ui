@@ -37,7 +37,8 @@ export default function Employee() {
   const [loading, setLoading] = useState(true);
   const [teamDTO, setTeamDTO] = useState({});
   const [startDate, setStartDate] = useState();
-  const [url, setUrl] = useState();
+  const [img, setImg] = useState();
+  const [urlImg, setUrlImg] = useState();
   const [avatar, setAvatar] = useState();
   const [teams, setTeams] = useState([]);
   const [workings, setWorkings] = useState([]);
@@ -48,10 +49,10 @@ export default function Employee() {
   const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   const [monthCurrent, setMonthCurrent] = useState(1);
   const [statical, setStatiscal] = useState({});
+  const [random, setRandom] = useState();
   useEffect(() => {
     fetchData();
-    console.log(url);
-  }, [url]);
+  }, [random]);
   const fetchData = async () => {
     const employeeRes = await axios.get(
       `http://localhost:8087/api/employees/` + id,
@@ -70,11 +71,10 @@ export default function Employee() {
     setTeams(teamsRes.data);
     setAdvances(advancesRes.data);
     setWorkings(workingsRes.data);
-    if (employeeRes.data.imageDTO !== null) {
-      setUrl(employeeRes.data.imageDTO.url);
-    }
+    getImg(employeeRes);
     const startDay = moment(employeeRes.data.startDay).format('YYYY-MM-DD');
     setStartDate(startDay);
+    console.log(employeeRes.data.imageDTO.url);
   };
   const handlePreviewAvatar = (event) => {
     console.log(event);
@@ -82,8 +82,17 @@ export default function Employee() {
     file && (file.preview = URL.createObjectURL(file));
     setAvatar(file);
   };
-
-  const handleSubmit = (event) => {
+  const getImg = (res) => {
+    console.log(res.data.imageDTO);
+    if (res.data.imageDTO !== null) {
+      setUrlImg(res.data.imageDTO.url);
+      setImg(res.data.imageDTO);
+    } else {
+      setUrlImg(image);
+      setImg(res.data.imageDTO);
+    }
+  };
+  const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(event);
     const data = new FormData(event.target);
@@ -107,10 +116,11 @@ export default function Employee() {
       url: 'http://localhost:8087/api/employees/' + id,
       data: updateEmployee,
     }).then(function (res) {
-      window.location.reload();
+      // window.location.reload();
+      fetchData();
     });
     if (employee.imageDTO === null) {
-      axios({
+      await axios({
         method: 'POST',
         url: 'http://localhost:8087/api/images/new?employee_id=' + employee.id,
         data: image,
@@ -118,25 +128,22 @@ export default function Employee() {
           'Content-Type': 'multipart/form-data',
         },
       }).then(function (res) {
-        console.log(res);
+        fetchData();
       });
     } else if (data.get('imageUpload').name !== '') {
-      axios({
+      await axios({
         method: 'PUT',
         url: 'http://localhost:8087/api/images/image/' + employee.imageDTO.id,
         data: image,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      }).then(function (res) {
-        window.location.reload();
-        console.log(res);
-        setUrl(res.data.url);
-      });
+      }).then(function (res) {});
     }
+    // fetchData();
     handleClose();
+    setRandom(Math.random());
   };
-  console.log(url);
   const handleDelete = async (event) => {
     let check = window.confirm('Are you sure to delete this employee?');
     if (check) {
@@ -174,7 +181,7 @@ export default function Employee() {
         id: employee.id,
       },
     };
-    axios({
+    const resAddWorking = await axios({
       method: 'POST',
       url: 'http://localhost:8087/api/workings/new',
       data: working,
@@ -183,7 +190,6 @@ export default function Employee() {
     });
     console.log(working);
   };
-
   const handleDeleteAdvance = async (id) => {
     let check = window.confirm('Are you sure to delete this working?');
     if (check) {
@@ -227,6 +233,7 @@ export default function Employee() {
       fetchData();
     });
   };
+  console.log(random);
   return (
     <>
       <LoadingScreen
@@ -248,11 +255,11 @@ export default function Employee() {
       <hr></hr>
       <div className={clsx(['row'])}>
         <div className={clsx(['col-4'])}>
-          {url === undefined ? (
-            <img className={clsx([styles.avatar])} src={image} />
-          ) : (
-            <img className={clsx([styles.avatar])} src={url} />
-          )}
+          <img
+            className={clsx([styles.avatar])}
+            src={urlImg + '?n=' + random}
+            id='test'
+          />
           <div className={clsx([styles.info])}>
             <span className={clsx([styles.no])}>No: {employee.id}</span>
             <span className={clsx([styles.age])}>Age:{employee.age}</span>
@@ -563,7 +570,7 @@ export default function Employee() {
               <Col sm='6'>
                 <Form.Group controlId='moneyPerHourEmployeeInput'>
                   <Form.Label column sm='4'>
-                    Mone/Hour
+                    Money/Hour
                   </Form.Label>
                   <Col sm='10'>
                     <Form.Control
@@ -641,7 +648,6 @@ export default function Employee() {
                 type='submit'
                 className={clsx([styles.btnsave])}
                 variant='warning'
-                onSubmit={handleSubmit}
               >
                 SAVE
               </Button>
