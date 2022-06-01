@@ -1,27 +1,148 @@
 @import "//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css";
 
 :root{
-  --primary-color: rgb(211, 212, 101);
+  --primary-color: rgb(255, 43, 6);
   --text-color: #333;
 }
 
 .btnDeleteEmployee{
   float: right;
-  font-size: 20px;
-  margin-left: 10px;
+  font-size: 25px;
+  margin-left: 15px;
   :hover{
     cursor: pointer;  
+    color: var(--primary-color);
   }
 }
 .btnEditEmployee{
   float: right;
-  font-size: 20px;
+  font-size: 25px;
   :hover{
     cursor: pointer;
+    color: var(--primary-color);
   }
 }
 
 .txtNameEmployee{
   float: left;
   color: var(--text-color);
+}
+
+.avatar{
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+}
+.no{
+  background-color: rgb(7, 127, 207);
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  margin-right: 10px;
+  font-weight: bold;
+}
+.age{
+  background-color: rgb(10, 194, 201);
+  color: white;
+  padding: 5px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+.sex{
+  background-color: rgb(255, 169, 9);
+  color: black;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 5px;
+}
+.info{
+  text-align: center;
+  margin-top: 10px;
+}
+.title{
+  text-align: left;
+  margin-top: 20px;
+}
+
+.updform{
+  margin: 20px;
+}
+.divbtn{
+  margin-top: 20px;
+  text-align: right;
+}
+
+.btnsave{
+  margin-left: 10px;
+  background-color: var(--primary-color);
+  border: 0;
+  border-radius: 5px;
+  color: white;
+  font-weight:bold;
+}
+
+.btncancel{
+  background-color: rgb(218, 69, 0);
+  border: 0;
+  font-weight:bold
+}
+
+.deleteAdvance{
+  :hover{
+    cursor: pointer;
+  }
+}
+
+.btnAddWorking{
+  float: right;
+  font-size: 25px;
+  :hover{
+    cursor: pointer;
+    color: var(--primary-color);
+  }
+}
+
+.centerAlign{
+  text-align: center;
+  align-self:center;
+}
+.avatarLabel{
+  width: 26px;
+  height: 26px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  margin-top: 10px;
+  margin-left: 36px;
+  text-align: center;
+  svg {
+      width: 13px;
+      height: 27px;
+      color: #fff;
+  }
+  :hover{
+    cursor: pointer;
+  }
+}
+.avatarPreview {   
+  width: 150px;
+  height: 150px;
+  margin: auto;
+  border: dashed 2px var(--primary-color);
+  border-radius: 50%;
+
+}
+.labelDiv{
+  display: inline-flex;
+  width: 150px;
+  position: absolute;
+}
+.imageUpload {
+  width: 146px;
+  height: 146px;
+  border-radius: 50%;
+}
+
+.imageInput{
+  display: none;
 }

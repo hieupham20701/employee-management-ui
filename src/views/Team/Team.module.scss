@@ -1,0 +1,32 @@
+@import "//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css";
+
+:root{
+  --primary-color: rgb(255, 43, 6);
+  --text-color: #333;
+
+}
+.title{
+  float: left;
+  color: var(--text-color);
+}
+
+.btnadd{
+  float: right;
+  font-size: 25px;
+  :hover{
+    cursor: pointer;
+    color: var(--primary-color);
+  }
+}
+
+.titleResEmployee{
+  float: right;
+  color: var(--text-color);
+}
+.showTeamDetail {
+  font-size: 18px;
+  :hover {
+      color: var(--primary-color);
+      cursor: pointer;
+  }
+}

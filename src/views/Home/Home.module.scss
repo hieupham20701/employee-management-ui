@@ -1,11 +1,9 @@
 @import "//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css";
-
 :root{
-   --primary-color: rgb(224, 238, 22);
+   --primary-color: rgb(255, 43, 6);
    --text-color: #333;
 
 }
-
 .title{
   float: left;
   color: var(--text-color);
@@ -14,17 +12,20 @@
 .btnAddEmployee{
   float: right;
   margin-left: 20px;
-  font-size: 22px;
+  font-size: 25px;
   :hover{
     color: var(--primary-color);
     cursor: pointer;
   }
 }
-
+.headerModal{
+  background-color: var(--primary-color) !important; 
+  color: whitesmoke;
+}
 .unactiveMultiDel {
   float: right;
   margin-left: 20px;
-  font-size: 22px;
+  font-size: 25px;
   opacity: 0.6;
   pointer-events: none;
   :hover{
@@ -35,7 +36,7 @@
 .activeMultiDel {
   float: right;
   margin-left: 20px;
-  font-size: 22px;
+  font-size: 25px;
   :hover {
       color: var(--primary-color);
       cursor: pointer;
@@ -51,4 +52,67 @@
 
 .modal {
   width: 50%;
+}
+
+.centerAlign{
+  text-align: center;
+  align-self:center;
+}
+.labelDiv{
+  display: inline-flex;
+  width: 150px;
+  position: absolute;
+}
+.avatarLabel{
+  width: 26px;
+  height: 26px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  margin-top: 10px;
+  margin-left: 36px;
+  text-align: center;
+  svg {
+      width: 13px;
+      height: 27px;
+      color: #fff;
+  }
+  :hover{
+    cursor: pointer;
+  }
+}
+.avatarPreview {   
+  width: 150px;
+  height: 150px;
+  margin: auto;
+  border: dashed 2px var(--primary-color);
+  border-radius: 50%;
+
+}
+
+.imageUpload {
+  width: 146px;
+  height: 146px;
+  border-radius: 50%;
+}
+
+.imageInput{
+  display: none;
+}
+
+.btnSubmit{
+  float: right;
+  margin-top: 10px; 
+  :hover{
+    background-color: var(--primary-color);
+    cursor: pointer;
+  }
+}
+
+.btnDetailInfo{
+  :hover{
+    color: var(--primary-color);
+    cursor: pointer;
+  }
+  margin-right: 15px;
+  font-size: 20px;
 }

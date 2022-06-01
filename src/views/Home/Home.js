@@ -2,10 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import clsx from 'clsx';
 import styles from './Home.module.scss';
 import { FaInfo, FaTrashAlt, FaPlusCircle, FaPencilAlt } from 'react-icons/fa';
+import image from '../../assets/img/default-avatar.png';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import LoadingScreen from 'react-loading-screen';
+import Employee from '../Employee/Employee';
 import {
   Form,
-  FormCheck,
-  FormGroup,
   Table,
   Pagination,
   Modal,
@@ -14,24 +18,196 @@ import {
   Row,
 } from 'react-bootstrap';
 export default function Home() {
-  const selectedEmployees = [];
   const pageNumbers = [];
   const [show, setShow] = useState(false);
-
+  const [avatar, setAvatar] = useState();
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const handleSubmit = (event) => {
+  const [currentPage, setCurrentPage] = useState();
+  const [totalPage, setTotalPage] = useState();
+  const [totalEmployee, setTotalEmployee] = useState();
+  const [employees, setEmployees] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [idDelete, setIdDelete] = useState([]);
+  const [selectedEmployee, setSelectedEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    fetchData();
+  }, []);
+  // console.log(employees);
+  // console.log(totalEmployee);
+  const fetchData = async (currentPage) => {
+    var page = 0;
+    if (currentPage !== undefined) {
+      page = currentPage;
+    }
+    const employees = await axios.get(
+      `http://localhost:8087/api/employees/pages?page=` + page,
+    );
+    const teams = await axios.get(`http://localhost:8087/api/teams`);
+    setTotalEmployee(employees.data.totalItems);
+    setEmployees(employees.data.employeeDTOs);
+    setTeams(teams.data);
+    setTotalPage(employees.data.totalPages);
+    setLoading(false);
+  };
+  for (let i = 0; i < totalPage; i++) {
+    pageNumbers.push(i);
+  }
+  const handleSubmitEmployee = async (event) => {
     event.preventDefault();
+    const data = new FormData(event.target);
+    const newEmployee = {
+      fullName: data.get('fullName').toString(),
+      age: parseInt(data.get('age')),
+      sex: data.get('sex'),
+      address: data.get('address').toString(),
+      phoneNumber: data.get('phoneNumber').toString(),
+      startDay: data.get('startDay'),
+      position: data.get('position'),
+      moneyPerHour: parseFloat(data.get('moneyPerHour')),
+      teamDTO: {
+        id: data.get('team'),
+      },
+    };
+    // console.log(newEmployee);
+    // console.log(data.get('imageUpload'));
+    const image = new FormData();
+    image.append('file', data.get('imageUpload'));
+
+    axios({
+      method: 'POST',
+      url: 'http://localhost:8087/api/employees/new',
+      data: newEmployee,
+    }).then(function (res) {
+      console.log(res.data);
+
+      fetchData();
+      if (data.get('imageUpload') !== '') {
+        handleSubmitImage(res.data, image);
+      }
+    });
+    handleClose();
+  };
+  const handleSubmitImage = async (employee, image) => {
+    axios({
+      method: 'POST',
+      url: 'http://localhost:8087/api/images/new?employee_id=' + employee.id,
+      data: image,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then(function (res) {
+      console.log(res);
+    });
+  };
+
+  const changePage = (event, pageCurrent) => {
+    setCurrentPage(pageCurrent);
+    fetchData(pageCurrent);
+  };
+
+  const handleDeleteItem = async (id) => {
+    let check = window.confirm('Are you sure to delete this employee?');
+    if (check) {
+      const deleteRes = await axios
+        .delete(`http://localhost:8087/api/employees/` + id)
+        .then(function (res) {
+          if (res.status === 200) {
+            window.alert('Delete Success!');
+          }
+        });
+      await fetchData();
+    }
+  };
+
+  const handleMultiDelete = async (event) => {
+    let check = window.confirm('Are you sure to delete them?');
+    console.log(selectedEmployee);
+    if (check) {
+      selectedEmployee.forEach((item) => idDelete.push(item.id));
+      console.log(idDelete);
+      const deleteRes = await axios
+        .delete(`http://localhost:8087/api/employees`, {
+          data: idDelete,
+        })
+        .then(function (res) {
+          if (res.status === 200) {
+            const checkboxes = document.querySelectorAll(
+              'input[type="checkbox"]',
+            );
+            for (var checkbox of checkboxes) {
+              checkbox.checked = false;
+            }
+            window.alert('Delete Success!');
+          }
+        });
+      fetchData();
+      setSelectedEmployees([]);
+      setIdDelete([]);
+      let remainEmployees;
+      remainEmployees = employees.filter(
+        (remainEmployee) => remainEmployee.isChecked !== true,
+      );
+      setEmployees(remainEmployees);
+    }
+  };
+
+  const handleAllChecked = (event) => {
     console.log(event);
+    const tempEmployee = employees;
+    tempEmployee.forEach(
+      (employee) => (employee.isChecked = event.target.checked),
+    );
+    setEmployees(tempEmployee);
+    console.log(tempEmployee);
+    setSelectedEmployees(
+      tempEmployee.filter((item) => item.isChecked === true),
+    );
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    for (var checkbox of checkboxes) {
+      checkbox.checked = event.target.checked;
+    }
+  };
+
+  const handleCheckChieldElement = (event) => {
+    console.log(event.target.checked);
+    let tempEmployee = employees;
+    let tempSelectedEmployee = [];
+    tempEmployee.forEach((employee) => {
+      if (employee.id.toString() === event.target.value) {
+        employee.isChecked = event.target.checked;
+      }
+      if (employee.isChecked) {
+        tempSelectedEmployee.push(employee);
+      }
+      setSelectedEmployees(tempSelectedEmployee);
+    });
   };
   let temp;
-  if (selectedEmployees.length === 0) {
+  if (selectedEmployee.length === 0) {
     temp = false;
   } else temp = true;
+  const handlePreviewAvatar = (event) => {
+    console.log(event);
+    const file = event.target.files[0];
+    file && (file.preview = URL.createObjectURL(file));
+    setAvatar(file);
+  };
 
+  const EmployeeDetail = (id) => {
+    window.location = '/employee/' + id;
+  };
   return (
     <>
+      <LoadingScreen
+        loading={loading}
+        bgColor='#f1f1f1'
+        spinnerColor='#9ee5f8'
+        textColor='#676767'
+        logoSrc='../../coding_club.png'
+        text='Wait a minute!'
+      ></LoadingScreen>
       <span
         id='btnAddEmployee'
         className={clsx([styles.btnAddEmployee])}
@@ -45,29 +221,33 @@ export default function Home() {
         className={clsx([styles.unactiveMultiDel], {
           [styles.activeMultiDel]: temp,
         })}
+        onClick={handleMultiDelete}
       >
         <FaTrashAlt />
       </span>
       <h4 className={clsx([styles.title])}>Employee Management</h4>
       <br />
       <hr />
-      <p className={clsx([styles.title])}>Total 6 Employees</p>
+      <p className={clsx([styles.title])}>Total {totalEmployee} Employees</p>
       <Form className={clsx([styles.formSearchEmployee])}>
         <Form.Group className='mb-3' controlId='formBasicText'>
           <input
             type='text'
             id='txtSearch'
             placeholder='&#xF002; Search by Name'
-            // className={clsx([styles.txtSearchEmployee])}
             style={{ fontFamily: 'Arial, FontAwesome' }}
           />
         </Form.Group>
       </Form>
-      <Table bordered='1'>
+      <Table>
         <thead>
           <tr>
             <th>
-              <FormCheck id={`default-checkbox`}></FormCheck>
+              <Form.Check
+                id={`default-checkbox`}
+                type='checkbox'
+                onClick={handleAllChecked}
+              ></Form.Check>
             </th>
             <th>No. </th>
             <th>Fullname</th>
@@ -76,42 +256,138 @@ export default function Home() {
             <th>Option</th>
           </tr>
         </thead>
+        <tbody>
+          {employees.map((employee) => (
+            <tr key={employee.id}>
+              <td>
+                {' '}
+                <input
+                  type='checkbox'
+                  id={`default-checkbox`}
+                  className={'item-checkbox'}
+                  value={employee.id}
+                  defaultChecked={employee.isChecked}
+                  onClick={handleCheckChieldElement}
+                ></input>
+              </td>
+              <td>{employees.indexOf(employee) + 1}</td>
+              <td>{employee.fullName}</td>
+              <td>{employee.phoneNumber}</td>
+              <td>{employee.teamDTO.name}</td>
+              <td>
+                <Link
+                  to={'/employee/' + employee.id}
+                  element={<Employee />}
+                  style={{ color: 'black' }}
+                >
+                  <FaInfo
+                    // onClick={() => EmployeeDetail(employee.id)}
+                    className={clsx([styles.btnDetailInfo])}
+                  />
+                </Link>
+                <FaTrashAlt
+                  onClick={() => handleDeleteItem(employee.id)}
+                  className={clsx([styles.btnDetailInfo])}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </Table>
       <div style={{ float: 'right' }}>
         <Pagination>
-          <Pagination.First />
-          <Pagination.Prev />
+          <Pagination.First onClick={(e) => changePage(e, 0)} />
+          <Pagination.Prev
+            onClick={(e) =>
+              changePage(e, currentPage > 0 ? currentPage - 1 : 0)
+            }
+          />
           {pageNumbers.map((pageNumber) => {
             return (
               <Pagination.Item
+                activeLabel='(current)'
                 className={clsx('page' + pageNumber)}
                 key={pageNumber}
-                // onClick={(e) => paginate(e, { pageNumber })}
+                onClick={(e) => changePage(e, pageNumber)}
               >
-                {pageNumber}
+                {pageNumber + 1}
               </Pagination.Item>
             );
           })}
-          <Pagination.Next />
-          <Pagination.Last />
+          <Pagination.Next
+            onClick={(e) =>
+              changePage(
+                e,
+                currentPage < totalPage - 1 ? currentPage + 1 : totalPage - 1,
+              )
+            }
+          />
+          <Pagination.Last onClick={(e) => changePage(e, totalPage - 1)} />
         </Pagination>
       </div>
       <Modal show={show} onHide={handleClose} size='lg' centered={true}>
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className={clsx([styles.headerModal])}>
           <Modal.Title>Add new Employee</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form
             className='addEmployeeForm'
             // method='POST'
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmitEmployee}
+            validated={true}
           >
+            <div className={clsx([styles.centerAlign])}>
+              <div className={clsx([styles.labelDiv])}>
+                <Form.Label
+                  className={clsx([styles.avatarLabel])}
+                  htmlFor='imageInput'
+                >
+                  <FaPencilAlt />
+                </Form.Label>
+              </div>
+              <div className={clsx([styles.avatarPreview])}>
+                {avatar ? (
+                  <img
+                    className={clsx([styles.imageUpload])}
+                    src={avatar.preview}
+                    alt=''
+                  />
+                ) : (
+                  <img
+                    className={clsx([styles.imageUpload])}
+                    src={image}
+                    alt=''
+                  />
+                )}
+              </div>
+            </div>
+            <Form.Group
+              className={clsx('mb-3', [styles.imageInput])}
+              controlId='imageInput'
+            >
+              <Form.Control
+                className={clsx('shadow-none')}
+                name='imageUpload'
+                type='file'
+                accept='image/*'
+                onChange={handlePreviewAvatar}
+              />
+            </Form.Group>
+
             <Form.Group controlId='fullNameInput' col='12' className='mb-3'>
               <Form.Label>Fullname Employee</Form.Label>
               <Form.Control
                 type='text'
                 placeholder='Fill the Fullname of Employee'
+                name='fullName'
+                required
               ></Form.Control>
+              <Form.Control.Feedback type='valid'>
+                Looks good!
+              </Form.Control.Feedback>
+              <Form.Control.Feedback type='invalid'>
+                Please fill Employee's address
+              </Form.Control.Feedback>
             </Form.Group>
             <Row>
               <Col sm='6'>
@@ -123,7 +399,15 @@ export default function Home() {
                     <Form.Control
                       type='text'
                       placeholder='Address'
+                      name='address'
+                      required
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's address
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -134,8 +418,8 @@ export default function Home() {
                   </Form.Label>
                   <Col sm='10'>
                     <Form.Select name='sex' aria-label='Default select example'>
-                      <option value='Male'>Male</option>
-                      <option value='Female'>Female</option>
+                      <option value={true}>Male</option>
+                      <option value={false}>Female</option>
                     </Form.Select>
                   </Col>
                 </Form.Group>
@@ -148,7 +432,19 @@ export default function Home() {
                     Age
                   </Form.Label>
                   <Col sm='10'>
-                    <Form.Control type='text' placeholder='Age'></Form.Control>
+                    <Form.Control
+                      type='text'
+                      placeholder='Age'
+                      name='age'
+                      required
+                      pattern='^[^0]\d*$'
+                    ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's age (greater than 0)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -158,7 +454,7 @@ export default function Home() {
                     Start Date
                   </Form.Label>
                   <Col sm='10'>
-                    <Form.Control type='Date'></Form.Control>
+                    <Form.Control type='Date' name='startDay'></Form.Control>
                   </Col>
                 </Form.Group>
               </Col>
@@ -167,13 +463,22 @@ export default function Home() {
               <Col sm='6'>
                 <Form.Group controlId='moneyPerHourEmployeeInput'>
                   <Form.Label column sm='4'>
-                    Mone/Hour
+                    Money/Hour
                   </Form.Label>
                   <Col sm='10'>
                     <Form.Control
                       type='text'
                       placeholder='Money'
+                      name='moneyPerHour'
+                      required
+                      pattern='^[^0]\d*$'
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's money/hour (greater than 0)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -186,22 +491,70 @@ export default function Home() {
                     <Form.Control
                       type='text'
                       placeholder='Phone number'
+                      name='phoneNumber'
+                      required
+                      pattern='[0-9]{10}'
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's phone numbers (10 num character)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
             </Row>
-            <Button variant='primary' type='submit' onSubmit={handleSubmit}>
+            <Row>
+              <Col sm='6'>
+                <Form.Group controlId='teamEmployee'>
+                  <Form.Label column sm='4'>
+                    Team
+                  </Form.Label>
+                  <Col sm='10'>
+                    <Form.Select
+                      name='team'
+                      aria-label='Default select example'
+                    >
+                      {teams.map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Col>
+                </Form.Group>
+              </Col>
+              <Col sm='6'>
+                <Form.Group controlId='positionEmployee'>
+                  <Form.Label column sm='4'>
+                    Position
+                  </Form.Label>
+                  <Col sm='10'>
+                    <Form.Control
+                      type='text'
+                      placeholder='Position'
+                      name='position'
+                      required
+                    ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's position
+                    </Form.Control.Feedback>
+                  </Col>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Button
+              type='submit'
+              onSubmit={handleSubmitEmployee}
+              variant='danger'
+              className={clsx([styles.btnSubmit])}
+            >
               Submit
             </Button>
-            {/* <Modal.Footer>
-              <Button variant='secondary' onClick={handleClose}>
-                Close
-              </Button>
-              <Button variant='primary' type='submit'>
-                Submit
-              </Button>
-            </Modal.Footer> */}
           </Form>
         </Modal.Body>
       </Modal>
