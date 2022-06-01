@@ -10,8 +10,6 @@ import LoadingScreen from 'react-loading-screen';
 import Employee from '../Employee/Employee';
 import {
   Form,
-  FormCheck,
-  FormGroup,
   Table,
   Pagination,
   Modal,
@@ -33,9 +31,6 @@ export default function Home() {
   const [idDelete, setIdDelete] = useState([]);
   const [selectedEmployee, setSelectedEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
-  const index = 0;
-  const [validated, setValidated] = useState(false);
-
   useEffect(() => {
     fetchData();
   }, []);
@@ -60,10 +55,7 @@ export default function Home() {
     pageNumbers.push(i);
   }
   const handleSubmitEmployee = async (event) => {
-    setValidated(true);
     event.preventDefault();
-
-    console.log(event);
     const data = new FormData(event.target);
     const newEmployee = {
       fullName: data.get('fullName').toString(),
@@ -95,6 +87,7 @@ export default function Home() {
         handleSubmitImage(res.data, image);
       }
     });
+    handleClose();
   };
   const handleSubmitImage = async (employee, image) => {
     axios({
@@ -108,7 +101,7 @@ export default function Home() {
       console.log(res);
     });
   };
-  console.log(validated);
+
   const changePage = (event, pageCurrent) => {
     setCurrentPage(pageCurrent);
     fetchData(pageCurrent);
@@ -341,7 +334,7 @@ export default function Home() {
             className='addEmployeeForm'
             // method='POST'
             onSubmit={handleSubmitEmployee}
-            validated={validated}
+            validated={true}
           >
             <div className={clsx([styles.centerAlign])}>
               <div className={clsx([styles.labelDiv])}>
@@ -389,7 +382,12 @@ export default function Home() {
                 name='fullName'
                 required
               ></Form.Control>
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              <Form.Control.Feedback type='valid'>
+                Looks good!
+              </Form.Control.Feedback>
+              <Form.Control.Feedback type='invalid'>
+                Please fill Employee's address
+              </Form.Control.Feedback>
             </Form.Group>
             <Row>
               <Col sm='6'>
@@ -404,7 +402,12 @@ export default function Home() {
                       name='address'
                       required
                     ></Form.Control>
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's address
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -434,8 +437,14 @@ export default function Home() {
                       placeholder='Age'
                       name='age'
                       required
+                      pattern='^[^0]\d*$'
                     ></Form.Control>
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's age (greater than 0)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -462,8 +471,14 @@ export default function Home() {
                       placeholder='Money'
                       name='moneyPerHour'
                       required
+                      pattern='^[^0]\d*$'
                     ></Form.Control>
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's money/hour (greater than 0)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -478,8 +493,14 @@ export default function Home() {
                       placeholder='Phone number'
                       name='phoneNumber'
                       required
+                      pattern='[0-9]{10}'
                     ></Form.Control>
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's phone numbers (10 num character)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -516,7 +537,12 @@ export default function Home() {
                       name='position'
                       required
                     ></Form.Control>
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's position
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -526,7 +552,6 @@ export default function Home() {
               onSubmit={handleSubmitEmployee}
               variant='danger'
               className={clsx([styles.btnSubmit])}
-              onClick={handleClose}
             >
               Submit
             </Button>

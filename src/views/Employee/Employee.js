@@ -64,7 +64,6 @@ export default function Employee() {
     const advancesRes = await axios.get(
       `http://localhost:8087/api/advance/` + id,
     );
-    console.log(employeeRes.data);
     setEmployee(employeeRes.data);
     setTeamDTO(employeeRes.data.teamDTO);
     setLoading(false);
@@ -74,7 +73,6 @@ export default function Employee() {
     getImg(employeeRes);
     const startDay = moment(employeeRes.data.startDay).format('YYYY-MM-DD');
     setStartDate(startDay);
-    console.log(employeeRes.data.imageDTO.url);
   };
   const handlePreviewAvatar = (event) => {
     console.log(event);
@@ -82,8 +80,9 @@ export default function Employee() {
     file && (file.preview = URL.createObjectURL(file));
     setAvatar(file);
   };
+  console.log(workings);
   const getImg = (res) => {
-    console.log(res.data.imageDTO);
+    // console.log(res.data.imageDTO);
     if (res.data.imageDTO !== null) {
       setUrlImg(res.data.imageDTO.url);
       setImg(res.data.imageDTO);
@@ -225,6 +224,7 @@ export default function Employee() {
         id: employee.id,
       },
     };
+    console.log(advance);
     axios({
       method: 'POST',
       url: 'http://localhost:8087/api/advance/new',
@@ -233,7 +233,6 @@ export default function Employee() {
       fetchData();
     });
   };
-  console.log(random);
   return (
     <>
       <LoadingScreen
@@ -339,7 +338,7 @@ export default function Employee() {
                   {workings.map((working) => (
                     <tr key={working.id}>
                       <td>{workings.indexOf(working) + 1}</td>
-                      <td>{working.date}</td>
+                      <td>{moment(working.date).format('DD-MM-YYYY')}</td>
                       <td>{working.hour}</td>
                       <td>
                         <span className={clsx([styles.deleteAdvance])}>
@@ -374,7 +373,7 @@ export default function Employee() {
                   {advances.map((advance) => (
                     <tr key={advance.id}>
                       <td>{advances.indexOf(advance) + 1}</td>
-                      <td>{advance.date}</td>
+                      <td>{moment(advance.date).format('DD-MM-YYYY')}</td>
                       <td>{advance.money}</td>
                       <td>
                         <span className={clsx([styles.deleteAdvance])}>
@@ -454,6 +453,7 @@ export default function Employee() {
             className='updateEmployeeForm'
             // method='POST'
             onSubmit={handleSubmit}
+            validated={true}
           >
             <div className={clsx([styles.centerAlign])}>
               <div className={clsx([styles.labelDiv])}>
@@ -499,7 +499,14 @@ export default function Employee() {
                 placeholder='Fill the Fullname of Employee'
                 defaultValue={employee.fullName}
                 name='fullName'
+                required
               ></Form.Control>
+              <Form.Control.Feedback type='valid'>
+                Looks good!
+              </Form.Control.Feedback>
+              <Form.Control.Feedback type='invalid'>
+                Please fill Employee's full name
+              </Form.Control.Feedback>
             </Form.Group>
             <Row>
               <Col sm='6'>
@@ -513,7 +520,14 @@ export default function Employee() {
                       placeholder='Address'
                       defaultValue={employee.address}
                       name='address'
+                      required
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's address
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -547,7 +561,16 @@ export default function Employee() {
                       placeholder='Age'
                       defaultValue={employee.age}
                       name='age'
+                      required
+                      pattern='^[^0]\d*$'
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's Age (greater than 0 and non
+                      character)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -578,7 +601,16 @@ export default function Employee() {
                       placeholder='Money'
                       defaultValue={employee.moneyPerHour}
                       name='moneyPerHour'
+                      required
+                      pattern='^[^0]\d*$'
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's money/hour (greater than 0 and non
+                      character)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -593,7 +625,15 @@ export default function Employee() {
                       placeholder='Phone number'
                       defaultValue={employee.phoneNumber}
                       name='phoneNumber'
+                      required
+                      pattern='^[0-9]{10}$'
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's Phone Number (10 num character)
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -629,7 +669,14 @@ export default function Employee() {
                       type='text'
                       defaultValue={employee.position}
                       name='position'
+                      required
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Employee's Position
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -671,6 +718,7 @@ export default function Employee() {
             className='addWorking'
             // method='POST'
             onSubmit={handleSubmitWorking}
+            validated={true}
           >
             <Row>
               <Col sm='6'>
@@ -683,8 +731,15 @@ export default function Employee() {
                       type='text'
                       placeholder='Hour'
                       name='hour'
-                      // defaultValue={employee.position}
+                      required
+                      pattern='^[^0]\d*$'
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Working Hour greater than 0
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
@@ -742,6 +797,7 @@ export default function Employee() {
             className='addAdvance'
             // method='POST'
             onSubmit={handleSubmitAdvance}
+            validated={true}
           >
             <Row>
               <Col sm='6'>
@@ -754,8 +810,15 @@ export default function Employee() {
                       type='text'
                       placeholder='Money'
                       name='money'
-                      // defaultValue={employee.position}
+                      required
+                      pattern='^[^0]\d*$'
                     ></Form.Control>
+                    <Form.Control.Feedback type='valid'>
+                      Looks good!
+                    </Form.Control.Feedback>
+                    <Form.Control.Feedback type='invalid'>
+                      Please fill Money greater than 0
+                    </Form.Control.Feedback>
                   </Col>
                 </Form.Group>
               </Col>
