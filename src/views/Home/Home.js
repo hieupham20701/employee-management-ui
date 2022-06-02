@@ -31,9 +31,10 @@ export default function Home() {
   const [idDelete, setIdDelete] = useState([]);
   const [selectedEmployee, setSelectedEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [nameSearch, setNameSearch] = useState('');
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [nameSearch]);
   // console.log(employees);
   // console.log(totalEmployee);
   const fetchData = async (currentPage) => {
@@ -42,7 +43,7 @@ export default function Home() {
       page = currentPage;
     }
     const employees = await axios.get(
-      `http://localhost:8087/api/employees/pages?page=` + page,
+      `http://localhost:8087/api/employees/pages/search?name=${nameSearch}&page=${page}&size=10`,
     );
     const teams = await axios.get(`http://localhost:8087/api/teams`);
     setTotalEmployee(employees.data.totalItems);
@@ -236,6 +237,7 @@ export default function Home() {
             id='txtSearch'
             placeholder='&#xF002; Search by Name'
             style={{ fontFamily: 'Arial, FontAwesome' }}
+            onChange={(e) => setNameSearch(e.target.value)}
           />
         </Form.Group>
       </Form>
@@ -386,7 +388,7 @@ export default function Home() {
                 Looks good!
               </Form.Control.Feedback>
               <Form.Control.Feedback type='invalid'>
-                Please fill Employee's address
+                Please fill Employee's Full name
               </Form.Control.Feedback>
             </Form.Group>
             <Row>
