@@ -1,16 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import image from '../../assets/img/default-avatar.png';
 import axios from 'axios';
 import LoadingScreen from 'react-loading-screen';
 import moment from 'moment';
 
-import {
-  FaInfo,
-  FaTrashAlt,
-  FaPlusCircle,
-  FaPencilAlt,
-  FaEdit,
-} from 'react-icons/fa';
+import { FaTrashAlt, FaPlusCircle, FaPencilAlt, FaEdit } from 'react-icons/fa';
 import clsx from 'clsx';
 import styles from './Employee.module.scss';
 import {
@@ -37,7 +31,6 @@ export default function Employee() {
   const [loading, setLoading] = useState(true);
   const [teamDTO, setTeamDTO] = useState({});
   const [startDate, setStartDate] = useState();
-  const [img, setImg] = useState();
   const [urlImg, setUrlImg] = useState();
   const [avatar, setAvatar] = useState();
   const [teams, setTeams] = useState([]);
@@ -80,15 +73,12 @@ export default function Employee() {
     file && (file.preview = URL.createObjectURL(file));
     setAvatar(file);
   };
-  console.log(workings);
   const getImg = (res) => {
     // console.log(res.data.imageDTO);
     if (res.data.imageDTO !== null) {
       setUrlImg(res.data.imageDTO.url);
-      setImg(res.data.imageDTO);
     } else {
       setUrlImg(image);
-      setImg(res.data.imageDTO);
     }
   };
   const handleSubmit = async (event) => {

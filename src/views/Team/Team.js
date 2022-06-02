@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaPlusCircle, FaRegAddressCard } from 'react-icons/fa';
-import {
-  Form,
-  FormCheck,
-  FormGroup,
-  Table,
-  Pagination,
-  Modal,
-  Button,
-  Col,
-  Row,
-} from 'react-bootstrap';
+import { Form, Table, Modal, Button, Col, Row } from 'react-bootstrap';
 import styles from './Team.module.scss';
 import clsx from 'clsx';
 import axios from 'axios';

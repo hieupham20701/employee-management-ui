@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import styles from './Home.module.scss';
 import { FaInfo, FaTrashAlt, FaPlusCircle, FaPencilAlt } from 'react-icons/fa';
@@ -35,8 +35,7 @@ export default function Home() {
   useEffect(() => {
     fetchData();
   }, [nameSearch]);
-  // console.log(employees);
-  // console.log(totalEmployee);
+
   const fetchData = async (currentPage) => {
     var page = 0;
     if (currentPage !== undefined) {
